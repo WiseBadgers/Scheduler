@@ -43,10 +43,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: 'Note')]
     private iterable $notes;
 
-    public function __construct()
-    {
-        $this->notes = new ArrayCollection();
-    }
+    #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: 'Course')]
+    private iterable $courses;
 
     public function getId(): int
     {
@@ -120,6 +118,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNotes(iterable|ArrayCollection $notes): void
     {
         $this->notes = $notes;
+    }
+
+    public function getCourses(): iterable
+    {
+        return $this->courses;
+    }
+
+    public function setCourses(iterable $courses): void
+    {
+        $this->courses = $courses;
     }
 
     public function eraseCredentials()

@@ -24,6 +24,9 @@ class Semester
     #[Assert\NotBlank]
     private string $name;
 
+    #[ORM\OneToMany(mappedBy: 'semester', targetEntity: 'Course')]
+    private iterable $courses;
+
     public function getId(): int
     {
         return $this->id;
@@ -37,6 +40,16 @@ class Semester
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getCourses(): iterable
+    {
+        return $this->courses;
+    }
+
+    public function setCourses(iterable $courses): void
+    {
+        $this->courses = $courses;
     }
 
 }

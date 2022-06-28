@@ -27,6 +27,9 @@ class Note
     #[ORM\ManyToOne(targetEntity: 'User', inversedBy: 'notes')]
     private User $user;
 
+    #[ORM\OneToMany(mappedBy: 'note', targetEntity: 'Course')]
+    private iterable $courses;
+
     public function getId(): int
     {
         return $this->id;
@@ -50,6 +53,16 @@ class Note
     public function setUser(User $user): void
     {
         $this->user = $user;
+    }
+
+    public function getCourses(): iterable
+    {
+        return $this->courses;
+    }
+
+    public function setCourses(iterable $courses): void
+    {
+        $this->courses = $courses;
     }
 
 }
