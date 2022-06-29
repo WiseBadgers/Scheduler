@@ -37,15 +37,19 @@ class Course
     #[ORM\Column]
     private int $id;
 
+    #[Groups(['course.read'])]
     #[ORM\ManyToOne(targetEntity: 'User', inversedBy: 'courses')]
     private User $teacher;
 
+    #[Groups(['course.read'])]
     #[ORM\ManyToOne(targetEntity: 'Semester', inversedBy: 'courses')]
     private Semester $semester;
 
+    #[Groups(['course.read'])]
     #[ORM\ManyToOne(targetEntity: 'Subject', inversedBy: 'courses')]
     private Subject $subject;
 
+    #[Groups(['course.read'])]
     #[ORM\ManyToOne(targetEntity: 'SchoolClass', inversedBy: 'courses')]
     private SchoolClass $schoolClass;
 
