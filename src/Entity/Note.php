@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -27,8 +28,8 @@ class Note
     #[ORM\ManyToOne(targetEntity: 'User', inversedBy: 'notes')]
     private User $user;
 
-    #[ORM\OneToMany(mappedBy: 'note', targetEntity: 'Course')]
-    private iterable $courses;
+    #[ORM\ManyToOne(targetEntity: 'Course', inversedBy: 'notes')]
+    private Course $course;
 
     public function getId(): int
     {
@@ -55,14 +56,14 @@ class Note
         $this->user = $user;
     }
 
-    public function getCourses(): iterable
+    public function getCourse(): Course
     {
-        return $this->courses;
+        return $this->course;
     }
 
-    public function setCourses(iterable $courses): void
+    public function setCourse(Course $course): void
     {
-        $this->courses = $courses;
+        $this->course = $course;
     }
 
 }

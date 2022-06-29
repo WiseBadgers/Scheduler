@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource]
 #[ORM\Entity]
 class Course
 {
@@ -23,7 +26,65 @@ class Course
     #[ORM\ManyToOne(targetEntity: 'Subject', inversedBy: 'courses')]
     private Subject $subject;
 
-    #[ORM\ManyToOne(targetEntity: 'Note', inversedBy: 'courses')]
-    private Note $note;
+    #[ORM\ManyToOne(targetEntity: 'SchoolClass', inversedBy: 'courses')]
+    private SchoolClass $schoolClass;
+
+    #[ORM\OneToMany(mappedBy: 'course', targetEntity: 'Note')]
+    private iterable $notes;
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getTeacher(): User
+    {
+        return $this->teacher;
+    }
+
+    public function setTeacher(User $teacher): void
+    {
+        $this->teacher = $teacher;
+    }
+
+    public function getSemester(): Semester
+    {
+        return $this->semester;
+    }
+
+    public function setSemester(Semester $semester): void
+    {
+        $this->semester = $semester;
+    }
+
+    public function getSubject(): Subject
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(Subject $subject): void
+    {
+        $this->subject = $subject;
+    }
+
+    public function getSchoolClass(): SchoolClass
+    {
+        return $this->schoolClass;
+    }
+
+    public function setSchoolClass(SchoolClass $schoolClass): void
+    {
+        $this->schoolClass = $schoolClass;
+    }
+
+    public function getNotes(): iterable|ArrayCollection
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(iterable|ArrayCollection $notes): void
+    {
+        $this->notes = $notes;
+    }
 
 }

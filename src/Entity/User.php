@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -40,11 +41,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank]
     private string $password;
 
+    #[ApiSubresource(1)]
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: 'Note')]
     private iterable $notes;
 
+    #[ApiSubresource(1)]
     #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: 'Course')]
     private iterable $courses;
+
+    #[ORM\ManyToOne(targetEntity: 'SchoolClass', inversedBy: 'students')]
+    private SchoolClass $schoolClass;
 
     public function getId(): int
     {
@@ -120,14 +126,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->notes = $notes;
     }
 
-    public function getCourses(): iterable
+    public function getCourses(): iterable|ArrayCollection
     {
         return $this->courses;
     }
 
-    public function setCourses(iterable $courses): void
+    public function setCourses(iterable|ArrayCollection $courses): void
     {
         $this->courses = $courses;
+    }
+
+    public function getSchoolClass(): SchoolClass
+    {
+        return $this->schoolClass;
+    }
+
+    public function setSchoolClass(SchoolClass $schoolClass): void
+    {
+        $this->schoolClass = $schoolClass;
     }
 
     public function eraseCredentials()
