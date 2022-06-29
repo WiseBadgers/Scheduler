@@ -39,29 +39,29 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    #[Groups(['user.read', 'course.read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('user.read')]
     private int $id;
 
+    #[Groups(['user.read', 'course.read'])]
     #[ORM\Column]
-    #[Groups('user.read')]
     #[Assert\NotBlank]
     private string $firstName;
 
+    #[Groups(['user.read', 'course.read'])]
     #[ORM\Column]
-    #[Groups('user.read')]
     #[Assert\NotBlank]
     private string $lastName;
 
+    #[Groups(['user.read', 'course.read'])]
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups('user.read')]
     #[Assert\Email]
     private string $email;
 
+    #[Groups(['user.read', 'course.read'])]
     #[ORM\Column(type: 'json')]
-    #[Groups('user.read')]
     private array $roles = [];
 
     #[ORM\Column]

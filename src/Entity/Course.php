@@ -10,11 +10,13 @@ use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[
     ApiResource(
         collectionOperations: ['get', 'post'],
-        itemOperations: ['get', 'patch', 'delete']
+        itemOperations: ['get', 'patch', 'delete'],
+        normalizationContext: ['groups' => 'course.read']
     ),
     ApiFilter(
         SearchFilter::class,
@@ -29,6 +31,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class Course
 {
+    #[Groups(['course.read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
