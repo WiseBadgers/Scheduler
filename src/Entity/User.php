@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +12,10 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'patch', 'delete']
+)]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -41,11 +43,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank]
     private string $password;
 
-    #[ApiSubresource(1)]
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: 'Note')]
+    #[ORM\OneToMany(mappedBy: 'student', targetEntity: 'Note')]
     private iterable $notes;
 
-    #[ApiSubresource(1)]
     #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: 'Course')]
     private iterable $courses;
 

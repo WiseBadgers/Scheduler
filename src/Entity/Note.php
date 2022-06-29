@@ -8,7 +8,10 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'patch', 'delete']
+)]
 #[ORM\Entity]
 class Note
 {
@@ -22,7 +25,7 @@ class Note
     private int $value;
 
     #[ORM\ManyToOne(targetEntity: 'User', inversedBy: 'notes')]
-    private User $user;
+    private User $student;
 
     #[ORM\ManyToOne(targetEntity: 'Course', inversedBy: 'notes')]
     private Course $course;
@@ -42,14 +45,14 @@ class Note
         $this->value = $value;
     }
 
-    public function getUser(): User
+    public function getStudent(): User
     {
-        return $this->user;
+        return $this->student;
     }
 
-    public function setUser(User $user): void
+    public function setStudent(User $student): void
     {
-        $this->user = $user;
+        $this->student = $student;
     }
 
     public function getCourse(): Course
