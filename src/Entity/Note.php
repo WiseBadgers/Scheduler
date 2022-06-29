@@ -12,7 +12,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/** Notes resource */
 #[
     ApiResource(
         collectionOperations: ['get', 'post'],

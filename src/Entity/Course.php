@@ -4,14 +4,28 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource(
-    collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch', 'delete']
-)]
+#[
+    ApiResource(
+        collectionOperations: ['get', 'post'],
+        itemOperations: ['get', 'patch', 'delete']
+    ),
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'teacher.id' => SearchFilterInterface::STRATEGY_EXACT,
+            'semester.id' => SearchFilterInterface::STRATEGY_EXACT,
+            'subject.id' => SearchFilterInterface::STRATEGY_EXACT,
+            'schoolClass.id' => SearchFilterInterface::STRATEGY_EXACT
+        ]
+    )
+]
 #[ORM\Entity]
 class Course
 {
