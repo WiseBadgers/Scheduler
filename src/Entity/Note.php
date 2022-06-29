@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(
-    collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch']
-)]
+#[ApiResource]
 #[ORM\Entity]
 class Note
 {

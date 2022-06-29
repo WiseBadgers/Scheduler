@@ -8,10 +8,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(
-    collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch', 'delete']
-)]
+#[ApiResource]
 #[ORM\Entity]
 class Semester
 {
