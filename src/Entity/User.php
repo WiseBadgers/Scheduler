@@ -4,39 +4,64 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(
-    collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch', 'delete']
-)]
+#[
+    ApiResource(
+        collectionOperations: ['get', 'post'],
+        itemOperations: ['get', 'patch', 'delete'],
+        attributes: ['pagination_items_per_page' => 10],
+        normalizationContext: ['groups' => 'user.read']
+    ),
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'schoolClass.id' => SearchFilterInterface::STRATEGY_EXACT,
+            'roles' => SearchFilterInterface::STRATEGY_PARTIAL
+        ],
+    ),
+    ApiFilter(
+        OrderFilter::class,
+        properties: ['firstName', 'lastName']
+    )
+]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('user.read')]
     private int $id;
 
     #[ORM\Column]
+    #[Groups('user.read')]
     #[Assert\NotBlank]
     private string $firstName;
 
     #[ORM\Column]
+    #[Groups('user.read')]
     #[Assert\NotBlank]
     private string $lastName;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups('user.read')]
     #[Assert\Email]
     private string $email;
 
     #[ORM\Column(type: 'json')]
+    #[Groups('user.read')]
     private array $roles = [];
 
     #[ORM\Column]
@@ -94,11 +119,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return $this->roles;
     }
 
     public function setRoles(array $roles): void
