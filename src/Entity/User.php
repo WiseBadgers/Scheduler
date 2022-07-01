@@ -21,7 +21,10 @@ use Symfony\Component\Validator\Constraints as Assert;
     ApiResource(
         collectionOperations: ['get', 'post'],
         itemOperations: ['get', 'patch', 'delete'],
-        attributes: ['pagination_items_per_page' => 10],
+        attributes: [
+            'pagination_items_per_page' => 10,
+            'formats' => ['json', 'jsonld', 'html', 'csv' => ['text/csv']]
+        ],
         normalizationContext: ['groups' => 'user.read']
     ),
     ApiFilter(

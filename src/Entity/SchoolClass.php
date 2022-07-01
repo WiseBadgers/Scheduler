@@ -12,7 +12,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch', 'delete']
+    itemOperations: ['get', 'patch', 'delete'],
+    shortName: 'Class'
 )]
 #[ORM\Entity]
 class SchoolClass

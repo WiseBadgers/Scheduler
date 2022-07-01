@@ -16,7 +16,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ApiResource(
         collectionOperations: ['get', 'post'],
         itemOperations: ['get', 'patch', 'delete'],
-        normalizationContext: ['groups' => 'course.read']
+        normalizationContext: [
+            'groups' => 'course.read',
+            'swagger_definition_name' => 'Course Read'
+        ]
     ),
     ApiFilter(
         SearchFilter::class,
