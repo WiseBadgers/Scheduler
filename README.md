@@ -24,3 +24,8 @@
 6. Run database migrations: `symfony console doc:mig:mig`
 7. Start symfony server: `symfony serve -d`
 8. You can access api: `http://127.0.0.1:8000/api`
+
+## Tests:
+
+1. PHPCS Sniffer - `vendor/bin/php-cs-fixer fix src`
+
