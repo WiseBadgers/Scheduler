@@ -10,11 +10,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         itemOperations: ['get', 'patch', 'delete'],
         attributes: [
             'pagination_items_per_page' => 10,
-            'formats' => ['json', 'jsonld', 'html', 'csv' => ['text/csv']]
+            'formats' => ['json', 'jsonld', 'html', 'csv' => ['text/csv']],
         ],
         normalizationContext: ['groups' => 'user.read']
     ),
@@ -31,7 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         SearchFilter::class,
         properties: [
             'schoolClass.id' => SearchFilterInterface::STRATEGY_EXACT,
-            'roles' => SearchFilterInterface::STRATEGY_PARTIAL
+            'roles' => SearchFilterInterface::STRATEGY_PARTIAL,
         ],
     ),
     ApiFilter(
@@ -43,10 +43,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[Groups(['user.read', 'course.read'])]
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
+    private Uuid $id;
 
     #[Groups(['user.read', 'course.read'])]
     #[ORM\Column]
@@ -80,7 +78,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(targetEntity: 'SchoolClass', inversedBy: 'students')]
     private SchoolClass $schoolClass;
 
-    public function getId(): int
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -140,40 +138,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
     }
 
-    public function getNotes(): iterable|ArrayCollection
-    {
-        return $this->notes;
-    }
-
-    public function setNotes(iterable|ArrayCollection $notes): void
-    {
-        $this->notes = $notes;
-    }
-
-    public function getCourses(): iterable|ArrayCollection
-    {
-        return $this->courses;
-    }
-
-    public function setCourses(iterable|ArrayCollection $courses): void
-    {
-        $this->courses = $courses;
-    }
-
-    public function getSchoolClass(): SchoolClass
-    {
-        return $this->schoolClass;
-    }
-
-    public function setSchoolClass(SchoolClass $schoolClass): void
-    {
-        $this->schoolClass = $schoolClass;
-    }
-
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
-
 }

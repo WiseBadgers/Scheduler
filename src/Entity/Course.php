@@ -11,15 +11,13 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 
 #[
     ApiResource(
         collectionOperations: ['get', 'post'],
         itemOperations: ['get', 'patch', 'delete'],
-        normalizationContext: [
-            'groups' => 'course.read',
-            'swagger_definition_name' => 'Course Read'
-        ]
+        normalizationContext: ['groups' => 'course.read']
     ),
     ApiFilter(
         SearchFilter::class,
@@ -27,7 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'teacher.id' => SearchFilterInterface::STRATEGY_EXACT,
             'semester.id' => SearchFilterInterface::STRATEGY_EXACT,
             'subject.id' => SearchFilterInterface::STRATEGY_EXACT,
-            'schoolClass.id' => SearchFilterInterface::STRATEGY_EXACT
+            'schoolClass.id' => SearchFilterInterface::STRATEGY_EXACT,
         ]
     )
 ]
@@ -35,10 +33,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Course
 {
     #[Groups(['course.read'])]
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
+    private Uuid $id;
 
     #[Groups(['course.read'])]
     #[ORM\ManyToOne(targetEntity: 'User', inversedBy: 'courses')]
@@ -59,7 +55,7 @@ class Course
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: 'Note')]
     private iterable $notes;
 
-    public function getId(): int
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -113,5 +109,4 @@ class Course
     {
         $this->notes = $notes;
     }
-
 }

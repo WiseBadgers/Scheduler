@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints AS Assert;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     collectionOperations: ['get', 'post'],
@@ -18,10 +18,8 @@ use Symfony\Component\Validator\Constraints AS Assert;
 class Subject
 {
     #[Groups(['course.read'])]
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
+    private Uuid $id;
 
     #[Groups(['course.read'])]
     #[ORM\Column]
@@ -31,7 +29,7 @@ class Subject
     #[ORM\OneToMany(mappedBy: 'subject', targetEntity: 'Course')]
     private iterable $courses;
 
-    public function getId(): int
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -45,15 +43,4 @@ class Subject
     {
         $this->name = $name;
     }
-
-    public function getCourses(): iterable|ArrayCollection
-    {
-        return $this->courses;
-    }
-
-    public function setCourses(iterable|ArrayCollection $courses): void
-    {
-        $this->courses = $courses;
-    }
-
 }

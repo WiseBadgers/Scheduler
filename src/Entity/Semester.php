@@ -7,6 +7,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
@@ -17,10 +18,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Semester
 {
     #[Groups(['course.read'])]
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
+    private Uuid $id;
 
     #[Groups(['course.read'])]
     #[ORM\Column]
@@ -30,7 +29,7 @@ class Semester
     #[ORM\OneToMany(mappedBy: 'semester', targetEntity: 'Course')]
     private iterable $courses;
 
-    public function getId(): int
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -44,15 +43,4 @@ class Semester
     {
         $this->name = $name;
     }
-
-    public function getCourses(): iterable
-    {
-        return $this->courses;
-    }
-
-    public function setCourses(iterable $courses): void
-    {
-        $this->courses = $courses;
-    }
-
 }

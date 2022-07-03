@@ -7,36 +7,30 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ApiResource(
         collectionOperations: ['get', 'post'],
-        itemOperations: ['get', 'patch', 'delete']
+        itemOperations: ['get', 'patch', 'delete'],
     ),
     ApiFilter(
         SearchFilter::class,
         properties: [
             'student.id' => SearchFilterInterface::STRATEGY_EXACT,
             'course.subject.id' => SearchFilterInterface::STRATEGY_EXACT,
-            'course.teacher.id' => SearchFilterInterface::STRATEGY_EXACT
+            'course.teacher.id' => SearchFilterInterface::STRATEGY_EXACT,
         ]
-    ),
-    ApiFilter(
-        OrderFilter::class,
-        properties: ['value']
     )
 ]
 #[ORM\Entity]
 class Note
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
+    private Uuid $id;
 
     #[ORM\Column]
     #[Assert\Range(min: 1, max: 5)]
@@ -48,7 +42,7 @@ class Note
     #[ORM\ManyToOne(targetEntity: 'Course', inversedBy: 'notes')]
     private Course $course;
 
-    public function getId(): int
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -62,25 +56,4 @@ class Note
     {
         $this->value = $value;
     }
-
-    public function getStudent(): User
-    {
-        return $this->student;
-    }
-
-    public function setStudent(User $student): void
-    {
-        $this->student = $student;
-    }
-
-    public function getCourse(): Course
-    {
-        return $this->course;
-    }
-
-    public function setCourse(Course $course): void
-    {
-        $this->course = $course;
-    }
-
 }
