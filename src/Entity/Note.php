@@ -9,7 +9,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Uid\Uuid;
+use Ramsey\Uuid\Doctrine\UuidGenerator;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
@@ -29,8 +30,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 class Note
 {
-    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
-    private Uuid $id;
+    #[ORM\Id]
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private UuidInterface $id;
 
     #[ORM\Column]
     #[Assert\Range(min: 1, max: 5)]
@@ -42,7 +46,7 @@ class Note
     #[ORM\ManyToOne(targetEntity: 'Course', inversedBy: 'notes')]
     private Course $course;
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
     }

@@ -6,8 +6,9 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Doctrine\UuidGenerator;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
@@ -19,8 +20,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SchoolClass
 {
     #[Groups(['course.read'])]
-    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
-    private Uuid $id;
+    #[ORM\Id]
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private UuidInterface $id;
 
     #[Groups(['course.read'])]
     #[ORM\Column]
@@ -33,7 +37,7 @@ class SchoolClass
     #[ORM\OneToMany(mappedBy: 'schoolClass', targetEntity: 'Course')]
     private iterable $courses;
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
     }

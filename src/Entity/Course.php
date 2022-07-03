@@ -10,8 +10,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Doctrine\UuidGenerator;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Uid\Uuid;
 
 #[
     ApiResource(
@@ -33,8 +34,11 @@ use Symfony\Component\Uid\Uuid;
 class Course
 {
     #[Groups(['course.read'])]
-    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
-    private Uuid $id;
+    #[ORM\Id]
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private UuidInterface $id;
 
     #[Groups(['course.read'])]
     #[ORM\ManyToOne(targetEntity: 'User', inversedBy: 'courses')]
@@ -55,7 +59,7 @@ class Course
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: 'Note')]
     private iterable $notes;
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
