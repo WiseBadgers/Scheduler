@@ -9,30 +9,28 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(
-    collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch', 'delete']
-)]
+#[ApiResource]
 #[ORM\Entity]
-class Semester
+class NoteType
 {
-    #[Groups(['course.read'])]
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['course.read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $name;
 
-    #[ORM\OneToMany(mappedBy: 'semester', targetEntity: Course::class)]
-    private iterable $courses;
+    #[ORM\Column]
+    #[Assert\Range(min: 1, max: 3)]
+    private int $weight;
+
+    #[ORM\OneToMany(mappedBy: 'noteType', targetEntity: Note::class)]
+    private iterable $notes;
 
     public function getId(): UuidInterface
     {
@@ -47,5 +45,15 @@ class Semester
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getWeight(): int
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(int $weight): void
+    {
+        $this->weight = $weight;
     }
 }

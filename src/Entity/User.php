@@ -12,6 +12,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -73,13 +74,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank]
     private string $password;
 
-    #[ORM\OneToMany(mappedBy: 'student', targetEntity: 'Note')]
+    #[ORM\OneToMany(mappedBy: 'student', targetEntity: Note::class)]
     private iterable $notes;
 
-    #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: 'Course')]
+    #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: Course::class)]
     private iterable $courses;
 
-    #[ORM\ManyToOne(targetEntity: 'SchoolClass', inversedBy: 'students')]
+    #[ORM\ManyToOne(targetEntity: SchoolClass::class, inversedBy: 'students')]
     private SchoolClass $schoolClass;
 
     public function getId(): UuidInterface

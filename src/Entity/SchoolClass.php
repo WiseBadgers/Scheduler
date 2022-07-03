@@ -7,6 +7,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -31,10 +32,10 @@ class SchoolClass
     #[Assert\NotBlank]
     private string $name;
 
-    #[ORM\OneToMany(mappedBy: 'schoolClass', targetEntity: 'User')]
+    #[ORM\OneToMany(mappedBy: 'schoolClass', targetEntity: User::class)]
     private iterable $students;
 
-    #[ORM\OneToMany(mappedBy: 'schoolClass', targetEntity: 'Course')]
+    #[ORM\OneToMany(mappedBy: 'schoolClass', targetEntity: Course::class)]
     private iterable $courses;
 
     public function getId(): UuidInterface

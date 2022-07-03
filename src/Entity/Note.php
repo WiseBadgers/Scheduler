@@ -10,6 +10,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -40,11 +41,14 @@ class Note
     #[Assert\Range(min: 1, max: 5)]
     private int $value;
 
-    #[ORM\ManyToOne(targetEntity: 'User', inversedBy: 'notes')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'notes')]
     private User $student;
 
-    #[ORM\ManyToOne(targetEntity: 'Course', inversedBy: 'notes')]
+    #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'notes')]
     private Course $course;
+
+    #[ORM\ManyToOne(targetEntity: NoteType::class, inversedBy: 'notes')]
+    private NoteType $noteType;
 
     public function getId(): UuidInterface
     {
@@ -59,5 +63,15 @@ class Note
     public function setValue(int $value): void
     {
         $this->value = $value;
+    }
+
+    public function getNoteType(): NoteType
+    {
+        return $this->noteType;
+    }
+
+    public function setNoteType(NoteType $noteType): void
+    {
+        $this->noteType = $noteType;
     }
 }
