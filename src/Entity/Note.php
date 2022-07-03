@@ -8,9 +8,10 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -50,6 +51,14 @@ class Note
     #[ORM\ManyToOne(targetEntity: NoteType::class, inversedBy: 'notes')]
     private NoteType $noteType;
 
+    #[ORM\OneToMany(mappedBy: 'note', targetEntity: NoteComment::class)]
+    private Collection $noteComments;
+
+    public function __construct()
+    {
+        $this->noteComments = new ArrayCollection();
+    }
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -65,6 +74,26 @@ class Note
         $this->value = $value;
     }
 
+    public function getStudent(): User
+    {
+        return $this->student;
+    }
+
+    public function setStudent(User $student): void
+    {
+        $this->student = $student;
+    }
+
+    public function getCourse(): Course
+    {
+        return $this->course;
+    }
+
+    public function setCourse(Course $course): void
+    {
+        $this->course = $course;
+    }
+
     public function getNoteType(): NoteType
     {
         return $this->noteType;
@@ -73,5 +102,10 @@ class Note
     public function setNoteType(NoteType $noteType): void
     {
         $this->noteType = $noteType;
+    }
+
+    public function getNoteComments(): iterable
+    {
+        return $this->noteComments;
     }
 }

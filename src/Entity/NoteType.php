@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -30,7 +31,12 @@ class NoteType
     private int $weight;
 
     #[ORM\OneToMany(mappedBy: 'noteType', targetEntity: Note::class)]
-    private iterable $notes;
+    private Collection $notes;
+
+    public function __construct()
+    {
+        $this->notes = new ArrayCollection();
+    }
 
     public function getId(): UuidInterface
     {

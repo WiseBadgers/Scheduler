@@ -11,7 +11,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -108,10 +107,5 @@ class Course
     public function getNotes(): iterable|ArrayCollection
     {
         return $this->notes;
-    }
-
-    public function setNotes(iterable|ArrayCollection $notes): void
-    {
-        $this->notes = $notes;
     }
 }

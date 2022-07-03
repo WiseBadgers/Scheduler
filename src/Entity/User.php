@@ -10,9 +10,10 @@ use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -75,13 +76,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     #[ORM\OneToMany(mappedBy: 'student', targetEntity: Note::class)]
-    private iterable $notes;
+    private Collection $notes;
 
     #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: Course::class)]
-    private iterable $courses;
+    private Collection $courses;
 
     #[ORM\ManyToOne(targetEntity: SchoolClass::class, inversedBy: 'students')]
     private SchoolClass $schoolClass;
+
+    public function __construct()
+    {
+        $this->notes = new ArrayCollection();
+        $this->courses = new ArrayCollection();
+    }
 
     public function getId(): UuidInterface
     {

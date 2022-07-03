@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -33,10 +34,16 @@ class SchoolClass
     private string $name;
 
     #[ORM\OneToMany(mappedBy: 'schoolClass', targetEntity: User::class)]
-    private iterable $students;
+    private Collection $students;
 
     #[ORM\OneToMany(mappedBy: 'schoolClass', targetEntity: Course::class)]
-    private iterable $courses;
+    private Collection $courses;
+
+    public function __construct()
+    {
+        $this->students = new ArrayCollection();
+        $this->courses = new ArrayCollection();
+    }
 
     public function getId(): UuidInterface
     {
