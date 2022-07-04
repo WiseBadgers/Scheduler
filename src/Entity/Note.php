@@ -42,13 +42,13 @@ class Note
     #[Assert\Range(min: 1, max: 5)]
     private int $value;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'notes')]
+    #[ORM\ManyToOne(inversedBy: 'notes')]
     private User $student;
 
-    #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'notes')]
+    #[ORM\ManyToOne(inversedBy: 'notes')]
     private Course $course;
 
-    #[ORM\ManyToOne(targetEntity: NoteType::class, inversedBy: 'notes')]
+    #[ORM\ManyToOne(inversedBy: 'notes')]
     private NoteType $noteType;
 
     #[ORM\OneToMany(mappedBy: 'note', targetEntity: NoteComment::class)]

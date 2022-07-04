@@ -25,7 +25,7 @@ class NoteComment
     #[ORM\Column(type: 'datetime')]
     private \DateTime $createdAt;
 
-    #[ORM\ManyToOne(targetEntity: Note::class, inversedBy: 'noteComments')]
+    #[ORM\ManyToOne(inversedBy: 'noteComments')]
     private Note $note;
 
     public function __construct()

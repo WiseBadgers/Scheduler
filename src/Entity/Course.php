@@ -9,6 +9,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
@@ -41,23 +42,28 @@ class Course
     private UuidInterface $id;
 
     #[Groups(['course.read'])]
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'courses')]
+    #[ORM\ManyToOne(inversedBy: 'courses')]
     private User $teacher;
 
     #[Groups(['course.read'])]
-    #[ORM\ManyToOne(targetEntity: Semester::class, inversedBy: 'courses')]
+    #[ORM\ManyToOne(inversedBy: 'courses')]
     private Semester $semester;
 
     #[Groups(['course.read'])]
-    #[ORM\ManyToOne(targetEntity: Subject::class, inversedBy: 'courses')]
+    #[ORM\ManyToOne(inversedBy: 'courses')]
     private Subject $subject;
 
     #[Groups(['course.read'])]
-    #[ORM\ManyToOne(targetEntity: SchoolClass::class, inversedBy: 'courses')]
+    #[ORM\ManyToOne(inversedBy: 'courses')]
     private SchoolClass $schoolClass;
 
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: Note::class)]
-    private iterable $notes;
+    private Collection $notes;
+
+    public function __construct()
+    {
+        $this->notes = new ArrayCollection();
+    }
 
     public function getId(): UuidInterface
     {

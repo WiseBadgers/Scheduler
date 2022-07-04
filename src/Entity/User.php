@@ -81,7 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: Course::class)]
     private Collection $courses;
 
-    #[ORM\ManyToOne(targetEntity: SchoolClass::class, inversedBy: 'students')]
+    #[ORM\ManyToOne(inversedBy: 'students')]
     private SchoolClass $schoolClass;
 
     public function __construct()
