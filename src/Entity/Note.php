@@ -13,12 +13,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ApiResource(
         collectionOperations: ['get', 'post'],
         itemOperations: ['get', 'patch', 'delete'],
+        denormalizationContext: ['groups' => ['note.write']],
+        normalizationContext: ['groups' => ['note.read']]
     ),
     ApiFilter(
         SearchFilter::class,
@@ -38,6 +41,7 @@ class Note
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
+    #[Groups(['note.read', 'note.write'])]
     #[ORM\Column]
     #[Assert\Range(min: 1, max: 5)]
     private int $value;
@@ -51,7 +55,14 @@ class Note
     #[ORM\ManyToOne(inversedBy: 'notes')]
     private NoteType $noteType;
 
-    #[ORM\OneToMany(mappedBy: 'note', targetEntity: NoteComment::class)]
+    #[Groups(['note.read', 'note.write'])]
+    #[ORM\OneToMany(
+        mappedBy: 'note',
+        targetEntity: NoteComment::class,
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true)
+    ]
+    #[Assert\Valid]
     private Collection $noteComments;
 
     public function __construct()
@@ -107,5 +118,24 @@ class Note
     public function getNoteComments(): iterable
     {
         return $this->noteComments;
+    }
+
+    public function addNoteComment(NoteComment $noteComment): self
+    {
+        if (!$this->noteComments->contains($noteComment)) {
+            $this->noteComments[] = $noteComment;
+            $noteComment->setNote($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNoteComment(NoteComment $noteComment): self
+    {
+        if ($this->noteComments->contains($noteComment)) {
+            $this->noteComments->removeElement($noteComment);
+        }
+
+        return $this;
     }
 }

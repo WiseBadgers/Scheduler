@@ -7,7 +7,9 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource]
 #[ORM\Entity]
@@ -19,9 +21,11 @@ class NoteComment
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
+    #[Groups(['note.read', 'note.write'])]
     #[ORM\Column(type: 'text')]
-    private string $comment;
+    private string $comment = '';
 
+    #[Groups(['note.read'])]
     #[ORM\Column(type: 'datetime')]
     private \DateTime $createdAt;
 
@@ -30,6 +34,7 @@ class NoteComment
 
     public function __construct()
     {
+        $this->id = Uuid::uuid4();
         $this->createdAt = new \DateTime();
     }
 
@@ -51,5 +56,10 @@ class NoteComment
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
+    }
+
+    public function setNote(Note $note): void
+    {
+        $this->note = $note;
     }
 }
