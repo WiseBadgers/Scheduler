@@ -18,7 +18,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ApiResource(
-        collectionOperations: ['get', 'post'],
+        collectionOperations: [
+            'get',
+            'post' => ['access_control' => "is_granted('ROLE_TEACHER')"],
+        ],
         itemOperations: ['get', 'patch', 'delete'],
         denormalizationContext: ['groups' => ['note.write']],
         normalizationContext: ['groups' => ['note.read']]
