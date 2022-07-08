@@ -21,14 +21,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 class SchoolClass
 {
-    #[Groups(['course.read'])]
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['course.read'])]
+    #[Groups(['user:read', 'course.read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $name;

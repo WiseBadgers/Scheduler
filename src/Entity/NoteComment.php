@@ -21,11 +21,11 @@ class NoteComment
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['note.read', 'note.write'])]
+    #[Groups(['note:read', 'note:write'])]
     #[ORM\Column(type: 'text')]
     private string $comment = '';
 
-    #[Groups(['note.read'])]
+    #[Groups(['note:read'])]
     #[ORM\Column(type: 'datetime')]
     private \DateTime $createdAt;
 

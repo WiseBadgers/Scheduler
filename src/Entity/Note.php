@@ -7,6 +7,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -27,30 +28,33 @@ use Symfony\Component\Validator\Constraints as Assert;
         ],
         itemOperations: [
             'get' => [
-                'security' => "(is_granted('ROLE_TEACHER') and object.getTeacher() == user) 
-                            or (is_granted('ROLE_STUDENT') and object.getStudent() == user)",
-                'security_message' => 'Only user with ROLE_TEACHER who gave a note 
-                            or ROLE_STUDENT who owns the note can get the note.',
+                'security' => "is_granted('GET_ITEM', object)",
+                'security_message' => 'Only user with ROLE_TEACHER who gave a note or ROLE_STUDENT who owns the note can get the note.',
             ],
             'delete' => [
-                'security' => "is_granted('ROLE_TEACHER') and object.getTeacher() == user",
+                'security' => "is_granted('DELETE_ITEM', object)",
                 'security_message' => 'Only user with ROLE TEACHER who gave a note can delete a note.',
             ],
             'patch' => [
-                'security' => "is_granted('ROLE_TEACHER') and object.getTeacher() == user",
+                'security' => "is_granted('PATCH_ITEM', object)",
                 'security_message' => 'Only user with ROLE_TEACHER who gave a note can update a note.',
             ],
         ],
-        denormalizationContext: ['groups' => ['note.write']],
-        normalizationContext: ['groups' => ['note.read']]
+        denormalizationContext: ['groups' => ['note:write']],
+        normalizationContext: ['groups' => ['note:read']]
     ),
     ApiFilter(
         SearchFilter::class,
         properties: [
             'student.id' => SearchFilterInterface::STRATEGY_EXACT,
+            'teacher.id' => SearchFilterInterface::STRATEGY_EXACT,
             'course.subject.id' => SearchFilterInterface::STRATEGY_EXACT,
-            'course.teacher.id' => SearchFilterInterface::STRATEGY_EXACT,
+            'course.semester.id' => SearchFilterInterface::STRATEGY_EXACT,
         ]
+    ),
+    ApiFilter(
+        OrderFilter::class,
+        properties: ['createdAt']
     )
 ]
 #[ORM\Entity]
@@ -62,33 +66,37 @@ class Note
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['note.read', 'note.write'])]
+    #[Groups(['note:read', 'note:write'])]
     #[ORM\Column]
     #[Assert\Range(min: 1, max: 5)]
     #[Assert\NotBlank]
     private int $value;
 
-    #[Groups(['note.read', 'note.write'])]
+    #[Groups(['note:read', 'note:write'])]
     #[ORM\ManyToOne(inversedBy: 'studentNotes')]
     #[Assert\NotBlank]
     private User $student;
 
-    #[Groups(['note.read', 'note.write'])]
+    #[Groups(['note:read', 'note:write'])]
     #[ORM\ManyToOne(inversedBy: 'teacherNotes')]
     #[Assert\NotBlank]
     private User $teacher;
 
-    // TODO: Add it to serialization group note.write and add NotBlank validation
-    #[Groups(['note.read'])]
+    #[Groups(['note:read'])]
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $createdAt;
+
+    // TODO: Add it to serialization group note:write and add NotBlank validation
+    #[Groups(['note:read'])]
     #[ORM\ManyToOne(inversedBy: 'notes')]
     private Course $course;
 
-    // TODO: Add it to serialization group note.write and add NotBlank validation
-    #[Groups(['note.read'])]
+    // TODO: Add it to serialization group note:write and add NotBlank validation
+    #[Groups(['note:read'])]
     #[ORM\ManyToOne(inversedBy: 'notes')]
     private NoteType $noteType;
 
-    #[Groups(['note.read', 'note.write'])]
+    #[Groups(['note:read', 'note:write'])]
     #[ORM\OneToMany(
         mappedBy: 'note',
         targetEntity: NoteComment::class,
@@ -101,6 +109,7 @@ class Note
     public function __construct()
     {
         $this->noteComments = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): UuidInterface
@@ -136,6 +145,11 @@ class Note
     public function setTeacher(User $teacher): void
     {
         $this->teacher = $teacher;
+    }
+
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
     }
 
     public function getCourse(): Course

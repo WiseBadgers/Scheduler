@@ -20,7 +20,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 class Semester
 {
-    #[Groups(['course.read'])]
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]

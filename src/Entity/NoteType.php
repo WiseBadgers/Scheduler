@@ -23,12 +23,12 @@ class NoteType
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['note.read'])]
+    #[Groups(['note:read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $name;
 
-    #[Groups(['note.read'])]
+    #[Groups(['note:read'])]
     #[ORM\Column]
     #[Assert\Range(min: 1, max: 3)]
     private int $weight;

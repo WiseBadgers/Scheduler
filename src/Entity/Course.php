@@ -45,11 +45,11 @@ class Course
     #[ORM\ManyToOne(inversedBy: 'courses')]
     private User $teacher;
 
-    #[Groups(['course.read', 'note.read'])]
+    #[Groups(['course.read', 'note:read'])]
     #[ORM\ManyToOne(inversedBy: 'courses')]
     private Semester $semester;
 
-    #[Groups(['course.read', 'note.read'])]
+    #[Groups(['course.read', 'note:read'])]
     #[ORM\ManyToOne(inversedBy: 'courses')]
     private Subject $subject;
 

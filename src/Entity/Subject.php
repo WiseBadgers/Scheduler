@@ -15,12 +15,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch', 'delete']
+    itemOperations: ['get', 'patch', 'delete'],
 )]
 #[ORM\Entity]
 class Subject
 {
-    #[Groups(['course.read'])]
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]

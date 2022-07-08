@@ -19,6 +19,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
@@ -29,7 +30,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             'pagination_items_per_page' => 10,
             'formats' => ['json', 'jsonld', 'html', 'csv' => ['text/csv']],
         ],
-        normalizationContext: ['groups' => 'user.read']
+        denormalizationContext: ['groups' => 'user:write'],
+        normalizationContext: ['groups' => 'user:read'],
     ),
     ApiFilter(
         SearchFilter::class,
@@ -47,36 +49,38 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[Groups(['user.read', 'course.read'])]
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['user.read', 'course.read', 'note.read'])]
+    #[Groups(['user:read', 'user:write', 'course.read', 'note:read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $firstName;
 
-    #[Groups(['user.read', 'course.read', 'note.read'])]
+    #[Groups(['user:read', 'user:write', 'course.read', 'note:read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $lastName;
 
-    #[Groups(['user.read', 'course.read'])]
+    #[Groups(['user:read', 'user:write', 'course.read'])]
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email]
     private string $email;
 
-    #[Groups(['user.read', 'course.read'])]
+    #[Groups(['user:read', 'user:write', 'course.read'])]
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
     #[ORM\Column]
-    #[Assert\NotBlank]
     private string $password;
+
+    #[Groups('user:write')]
+    #[SerializedName('password')]
+    private ?string $plainPassword;
 
     #[ORM\OneToMany(mappedBy: 'student', targetEntity: Note::class)]
     private Collection $studentNotes;
@@ -87,12 +91,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: Course::class)]
     private Collection $courses;
 
+    #[Groups(['user:read', 'user:write'])]
     #[ORM\ManyToOne(inversedBy: 'students')]
     private SchoolClass $schoolClass;
 
     public function __construct()
     {
-        $this->notes = new ArrayCollection();
+        $this->studentNotes = new ArrayCollection();
+        $this->teacherNotes = new ArrayCollection();
         $this->courses = new ArrayCollection();
     }
 
@@ -159,9 +165,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
     }
 
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    public function getSchoolClass(): SchoolClass
+    {
+        return $this->schoolClass;
+    }
+
+    public function setSchoolClass(SchoolClass $schoolClass): void
+    {
+        $this->schoolClass = $schoolClass;
+    }
+
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 }
