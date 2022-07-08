@@ -54,12 +54,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['user.read', 'course.read'])]
+    #[Groups(['user.read', 'course.read', 'note.read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $firstName;
 
-    #[Groups(['user.read', 'course.read'])]
+    #[Groups(['user.read', 'course.read', 'note.read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $lastName;
@@ -79,7 +79,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     #[ORM\OneToMany(mappedBy: 'student', targetEntity: Note::class)]
-    private Collection $notes;
+    private Collection $studentNotes;
+
+    #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: Note::class)]
+    private Collection $teacherNotes;
 
     #[ORM\OneToMany(mappedBy: 'teacher', targetEntity: Course::class)]
     private Collection $courses;

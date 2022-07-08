@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource]
@@ -22,10 +23,12 @@ class NoteType
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
+    #[Groups(['note.read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $name;
 
+    #[Groups(['note.read'])]
     #[ORM\Column]
     #[Assert\Range(min: 1, max: 3)]
     private int $weight;

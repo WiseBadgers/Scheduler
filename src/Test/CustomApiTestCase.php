@@ -6,6 +6,7 @@ namespace App\Test;
 
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Client;
+use App\Entity\Note;
 use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
@@ -31,12 +32,12 @@ class CustomApiTestCase extends ApiTestCase
         return $user;
     }
 
-    protected function logIn(Client $client, string $email, string $password): void
+    protected function logIn(Client $client, User $user): void
     {
         $client->request('POST', 'login', [
                 'headers' => ['Content-Type' => 'application/json'],
                 'json' => [
-                    'email' => $email,
+                    'email' => $user->getEmail(),
                     'password' => 'test',
                 ],
             ]
@@ -44,12 +45,19 @@ class CustomApiTestCase extends ApiTestCase
         $this->assertResponseStatusCodeSame(204);
     }
 
-    protected function createUserAndLogIn(Client $client, string $email, string $password, array $roles): User
+    protected function createNote($student, $teacher): Note
     {
-        $user = $this->createUser($email, $password, $roles);
-        $this->logIn($client, $email, 'test');
+        $note = new Note();
+        $note->setValue(3);
+        $note->setStudent($student);
+        $note->setTeacher($teacher);
+//        $note->setCourse($this->course);
+//        $note->setNoteType($this->noteType);
+        $em = $this->getEntityManager();
+        $em->persist($note);
+        $em->flush();
 
-        return $user;
+        return $note;
     }
 
     protected function getPasswordHasher(): UserPasswordHasherInterface

@@ -22,9 +22,25 @@ use Symfony\Component\Validator\Constraints as Assert;
             'get',
             'post' => [
                 'security' => "is_granted('ROLE_TEACHER')",
+                'security_message' => 'Only user with ROLE_TEACHER can create a note.',
             ],
         ],
-        itemOperations: ['get', 'patch', 'delete'],
+        itemOperations: [
+            'get' => [
+                'security' => "(is_granted('ROLE_TEACHER') and object.getTeacher() == user) 
+                            or (is_granted('ROLE_STUDENT') and object.getStudent() == user)",
+                'security_message' => 'Only user with ROLE_TEACHER who gave a note 
+                            or ROLE_STUDENT who owns the note can get the note.',
+            ],
+            'delete' => [
+                'security' => "is_granted('ROLE_TEACHER') and object.getTeacher() == user",
+                'security_message' => 'Only user with ROLE TEACHER who gave a note can delete a note.',
+            ],
+            'patch' => [
+                'security' => "is_granted('ROLE_TEACHER') and object.getTeacher() == user",
+                'security_message' => 'Only user with ROLE_TEACHER who gave a note can update a note.',
+            ],
+        ],
         denormalizationContext: ['groups' => ['note.write']],
         normalizationContext: ['groups' => ['note.read']]
     ),
@@ -49,14 +65,26 @@ class Note
     #[Groups(['note.read', 'note.write'])]
     #[ORM\Column]
     #[Assert\Range(min: 1, max: 5)]
+    #[Assert\NotBlank]
     private int $value;
 
-    #[ORM\ManyToOne(inversedBy: 'notes')]
+    #[Groups(['note.read', 'note.write'])]
+    #[ORM\ManyToOne(inversedBy: 'studentNotes')]
+    #[Assert\NotBlank]
     private User $student;
 
+    #[Groups(['note.read', 'note.write'])]
+    #[ORM\ManyToOne(inversedBy: 'teacherNotes')]
+    #[Assert\NotBlank]
+    private User $teacher;
+
+    // TODO: Add it to serialization group note.write and add NotBlank validation
+    #[Groups(['note.read'])]
     #[ORM\ManyToOne(inversedBy: 'notes')]
     private Course $course;
 
+    // TODO: Add it to serialization group note.write and add NotBlank validation
+    #[Groups(['note.read'])]
     #[ORM\ManyToOne(inversedBy: 'notes')]
     private NoteType $noteType;
 
@@ -98,6 +126,16 @@ class Note
     public function setStudent(User $student): void
     {
         $this->student = $student;
+    }
+
+    public function getTeacher(): User
+    {
+        return $this->teacher;
+    }
+
+    public function setTeacher(User $teacher): void
+    {
+        $this->teacher = $teacher;
     }
 
     public function getCourse(): Course
