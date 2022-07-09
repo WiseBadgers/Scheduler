@@ -37,7 +37,7 @@ class NoteTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if student gets Access Denied
-        $this->logIn($this->client, $this->student1);
+        $this->logIn($this->client, 'student1@test.com', 'test');
         $this->client->request('POST', '/api/notes', [
             'headers' => ['Content-Type' => 'application/json'],
             'json' => [
@@ -51,7 +51,7 @@ class NoteTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(403);
 
         // tests if teacher can create a note with Success
-        $this->logIn($this->client, $this->teacher1);
+        $this->logIn($this->client, 'teacher1@test.com', 'test');
         $this->client->request('POST', '/api/notes', [
             'headers' => ['Content-Type' => 'application/json'],
             'json' => [
@@ -88,22 +88,22 @@ class NoteTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if student who does not own the note gets Access Denied
-        $this->logIn($this->client, $this->student2);
+        $this->logIn($this->client, 'student2@test.com', 'test');
         $this->client->request('GET', '/api/notes/'.$note->getId());
         $this->assertResponseStatusCodeSame(403);
 
         // tests if student who owns the note can fetch it with Success
-        $this->logIn($this->client, $this->student1);
+        $this->logIn($this->client, 'student1@test.com', 'test');
         $this->client->request('GET', '/api/notes/'.$note->getId());
         $this->assertResponseStatusCodeSame(200);
 
         // tests if teacher who does not own the note gets Access Denied
-        $this->logIn($this->client, $this->teacher2);
+        $this->logIn($this->client, 'teacher2@test.com', 'test');
         $this->client->request('GET', '/api/notes/'.$note->getId());
         $this->assertResponseStatusCodeSame(403);
 
         // tests if teacher who owns the note can fetch it with Success
-        $this->logIn($this->client, $this->teacher1);
+        $this->logIn($this->client, 'teacher1@test.com', 'test');
         $this->client->request('GET', '/api/notes/'.$note->getId());
         $this->assertResponseStatusCodeSame(200);
     }
@@ -117,17 +117,17 @@ class NoteTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if student gets Access Denied
-        $this->logIn($this->client, $this->student1);
+        $this->logIn($this->client, 'student1@test.com', 'test');
         $this->client->request('DELETE', '/api/notes/'.$note->getId());
         $this->assertResponseStatusCodeSame(403);
 
         // tests if teacher that does not own the note gets Access Denied
-        $this->logIn($this->client, $this->teacher1);
+        $this->logIn($this->client, 'teacher1@test.com', 'test');
         $this->client->request('DELETE', '/api/notes/'.$note->getId());
         $this->assertResponseStatusCodeSame(403);
 
         // tests if teacher that owns the note can delete it with Success
-        $this->logIn($this->client, $this->teacher2);
+        $this->logIn($this->client, 'teacher2@test.com', 'test');
         $this->client->request('DELETE', '/api/notes/'.$note->getId());
         $this->assertResponseStatusCodeSame(204);
     }
@@ -144,7 +144,7 @@ class NoteTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if a student gets Access Denied while trying to patch a note
-        $this->logIn($this->client, $this->student1);
+        $this->logIn($this->client, 'student1@test.com', 'test');
         $this->client->request('PATCH', '/api/notes/'.$note->getId(), [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
             'json' => ['value' => 4],
@@ -152,7 +152,7 @@ class NoteTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(403);
 
         // tests if a teacher that does not own the note gets Access Denied while trying to patch a note
-        $this->logIn($this->client, $this->teacher2);
+        $this->logIn($this->client, 'teacher2@test.com', 'test');
         $this->client->request('PATCH', '/api/notes/'.$note->getId(), [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
             'json' => ['value' => 4],
@@ -160,7 +160,7 @@ class NoteTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(403);
 
         // tests if a teacher that owns the note gets Success
-        $this->logIn($this->client, $this->teacher1);
+        $this->logIn($this->client, 'teacher1@test.com', 'test');
         $this->client->request('PATCH', '/api/notes/'.$note->getId(), [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
             'json' => ['value' => 4],

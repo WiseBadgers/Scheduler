@@ -32,17 +32,25 @@ class CustomApiTestCase extends ApiTestCase
         return $user;
     }
 
-    protected function logIn(Client $client, User $user): void
+    protected function logIn(Client $client, string $email, string $password): void
     {
         $client->request('POST', 'login', [
                 'headers' => ['Content-Type' => 'application/json'],
                 'json' => [
-                    'email' => $user->getEmail(),
-                    'password' => 'test',
+                    'email' => $email,
+                    'password' => $password,
                 ],
             ]
         );
         $this->assertResponseStatusCodeSame(204);
+    }
+
+    protected function createUserAndLogIn(Client $client, string $email, string $password, array $roles): User
+    {
+        $user = $this->createUser($email, $password, $roles);
+        $this->logIn($client, $email, $password);
+
+        return $user;
     }
 
     protected function createNote($student, $teacher): Note

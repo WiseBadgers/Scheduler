@@ -24,7 +24,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ApiResource(
-        collectionOperations: ['get', 'post'],
+        collectionOperations: [
+            'get',
+            'post' => [
+              'validation_groups' => ['Default', 'create'],
+            ],
+        ],
         itemOperations: ['get', 'patch', 'delete'],
         attributes: [
             'pagination_items_per_page' => 10,
@@ -80,7 +85,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Groups('user:write')]
     #[SerializedName('password')]
-    private ?string $plainPassword;
+    #[Assert\NotBlank(groups: ['create'])]
+    private ?string $plainPassword = null;
 
     #[ORM\OneToMany(mappedBy: 'student', targetEntity: Note::class)]
     private Collection $studentNotes;
