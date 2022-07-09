@@ -35,8 +35,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             'pagination_items_per_page' => 10,
             'formats' => ['json', 'jsonld', 'html', 'csv' => ['text/csv']],
         ],
-        denormalizationContext: ['groups' => 'user:write'],
-        normalizationContext: ['groups' => 'user:read'],
+        denormalizationContext: ['groups' => ['user:write']],
+        normalizationContext: ['groups' => ['user:read']],
     ),
     ApiFilter(
         SearchFilter::class,
@@ -60,30 +60,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['user:read', 'user:write', 'course.read', 'note:read'])]
+    #[Groups(['user:read', 'user:write', 'course:read', 'note:read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $firstName;
 
-    #[Groups(['user:read', 'user:write', 'course.read', 'note:read'])]
+    #[Groups(['user:read', 'user:write', 'course:read', 'note:read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $lastName;
 
-    #[Groups(['user:read', 'user:write', 'course.read'])]
+    #[Groups(['user:read', 'user:write', 'course:read'])]
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email]
     private string $email;
 
-    #[Groups(['user:read', 'user:write', 'course.read'])]
+    #[Groups(['teacher:read', 'user:write'])]
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $phoneNumber = null;
+
+    #[Groups(['user:read', 'admin:write', 'course:read'])]
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
     #[ORM\Column]
     private string $password;
 
-    #[Groups('user:write')]
+    #[Groups(['user:write'])]
     #[SerializedName('password')]
     #[Assert\NotBlank(groups: ['create'])]
     private ?string $plainPassword = null;
@@ -141,6 +145,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): void
     {
         $this->email = $email;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): void
+    {
+        $this->phoneNumber = $phoneNumber;
     }
 
     public function getUserIdentifier(): string

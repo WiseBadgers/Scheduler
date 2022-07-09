@@ -20,7 +20,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ApiResource(
         collectionOperations: [
-            'get',
+            'get' => [
+                'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
+                'security_message' => 'You need to be logged-in user to access this resource.',
+            ],
             'post' => [
                 'security' => "is_granted('ROLE_TEACHER')",
                 'security_message' => 'Only user with ROLE_TEACHER can create a note.',

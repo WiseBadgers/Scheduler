@@ -26,7 +26,7 @@ class Semester
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['course.read'])]
+    #[Groups(['course:read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $name;

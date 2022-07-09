@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ApiResource(
         collectionOperations: ['get', 'post'],
         itemOperations: ['get', 'patch', 'delete'],
-        normalizationContext: ['groups' => 'course.read']
+        normalizationContext: ['groups' => ['course:read']]
     ),
     ApiFilter(
         SearchFilter::class,
@@ -34,26 +34,26 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity]
 class Course
 {
-    #[Groups(['course.read'])]
+    #[Groups(['course:read'])]
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['course.read'])]
+    #[Groups(['course:read'])]
     #[ORM\ManyToOne(inversedBy: 'courses')]
     private User $teacher;
 
-    #[Groups(['course.read', 'note:read'])]
+    #[Groups(['course:read', 'note:read'])]
     #[ORM\ManyToOne(inversedBy: 'courses')]
     private Semester $semester;
 
-    #[Groups(['course.read', 'note:read'])]
+    #[Groups(['course:read', 'note:read'])]
     #[ORM\ManyToOne(inversedBy: 'courses')]
     private Subject $subject;
 
-    #[Groups(['course.read'])]
+    #[Groups(['course:read'])]
     #[ORM\ManyToOne(inversedBy: 'courses')]
     private SchoolClass $schoolClass;
 

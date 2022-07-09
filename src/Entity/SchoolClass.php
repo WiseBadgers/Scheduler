@@ -27,7 +27,7 @@ class SchoolClass
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['user:read', 'course.read'])]
+    #[Groups(['user:read', 'course:read'])]
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $name;
