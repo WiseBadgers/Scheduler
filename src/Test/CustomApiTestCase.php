@@ -7,6 +7,7 @@ namespace App\Test;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Client;
 use App\Entity\Note;
+use App\Entity\SchoolClass;
 use App\Entity\Semester;
 use App\Entity\Subject;
 use App\Entity\User;
@@ -79,6 +80,17 @@ class CustomApiTestCase extends ApiTestCase
         $em->flush();
 
         return $subject;
+    }
+
+    protected function createClass(string $name): SchoolClass
+    {
+        $class = new SchoolClass();
+        $class->setName($name);
+        $em = $this->getEntityManager();
+        $em->persist($class);
+        $em->flush();
+
+        return $class;
     }
 
     protected function createSemester(string $name): Semester

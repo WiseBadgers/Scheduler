@@ -11,21 +11,6 @@ class SemesterTest extends CustomApiTestCase
 {
     use ReloadDatabaseTrait;
 
-    public function testGetSemester(): void
-    {
-        $client = self::createClient();
-        $semester = $this->createSemester('Winter 2021');
-
-        // tests if anonymous user gets Unauthorized
-        $client->request('GET', '/api/semesters/'.$semester->getId());
-        $this->assertResponseStatusCodeSame(401);
-
-        // tests if logged-in user gets Success
-        $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
-        $client->request('GET', '/api/semesters/'.$semester->getId());
-        $this->assertResponseIsSuccessful();
-    }
-
     public function testPostSemester(): void
     {
         $client = self::createClient();
@@ -55,6 +40,21 @@ class SemesterTest extends CustomApiTestCase
             'json' => ['name' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'],
         ]);
         $this->assertResponseStatusCodeSame(422);
+    }
+
+    public function testGetSemester(): void
+    {
+        $client = self::createClient();
+        $semester = $this->createSemester('Winter 2021');
+
+        // tests if anonymous user gets Unauthorized
+        $client->request('GET', '/api/semesters/'.$semester->getId());
+        $this->assertResponseStatusCodeSame(401);
+
+        // tests if logged-in user gets Success
+        $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $client->request('GET', '/api/semesters/'.$semester->getId());
+        $this->assertResponseIsSuccessful();
     }
 
     public function testDeleteSemester(): void
