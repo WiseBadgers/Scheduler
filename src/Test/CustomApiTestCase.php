@@ -7,6 +7,7 @@ namespace App\Test;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Client;
 use App\Entity\Note;
+use App\Entity\Subject;
 use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
@@ -66,6 +67,17 @@ class CustomApiTestCase extends ApiTestCase
         $em->flush();
 
         return $note;
+    }
+
+    protected function createSubject($name): Subject
+    {
+        $subject = new Subject();
+        $subject->setName($name);
+        $em = $this->getEntityManager();
+        $em->persist($subject);
+        $em->flush();
+
+        return $subject;
     }
 
     protected function getPasswordHasher(): UserPasswordHasherInterface
