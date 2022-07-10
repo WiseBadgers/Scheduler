@@ -21,7 +21,7 @@ final class TeacherGroupsContextBuilder implements SerializerContextBuilderInter
         $context = $this->decorated->createFromRequest($request, $normalization, $extractedAttributes);
         $isTeacher = $this->authorizationChecker->isGranted('ROLE_TEACHER');
 
-        if ($context['groups'] && $isTeacher) {
+        if (isset($context['groups']) && $isTeacher) {
             $context['groups'][] = $normalization ? 'teacher:read' : 'teacher:write';
         }
 
