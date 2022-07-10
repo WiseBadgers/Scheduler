@@ -14,8 +14,30 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
-    collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch', 'delete']
+    collectionOperations: [
+        'get' => [
+            'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
+            'security_message' => 'Only authenticated users can get collection of subjects.',
+        ],
+        'post' => [
+            'security' => "is_granted('ROLE_ADMIN')",
+            'security_message' => 'Only user with ROLE_ADMIN can create a subject',
+        ],
+    ],
+    itemOperations: [
+        'get' => [
+            'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
+            'security_message' => 'Only authenticated users can get a subject.',
+        ],
+        'patch' => [
+            'security' => "is_granted('ROLE_ADMIN')",
+            'security_message' => 'Only user with ROLE_ADMIN can update a subject',
+        ],
+        'delete' => [
+            'security' => "is_granted('ROLE_ADMIN')",
+            'security_message' => 'Only user with ROLE_ADMIN can update a subject',
+        ],
+    ],
 )]
 #[ORM\Entity]
 class Semester
@@ -27,8 +49,9 @@ class Semester
     private UuidInterface $id;
 
     #[Groups(['course:read'])]
-    #[ORM\Column]
+    #[ORM\Column(length: 30)]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 30)]
     private string $name;
 
     #[ORM\OneToMany(mappedBy: 'semester', targetEntity: Course::class)]

@@ -7,6 +7,7 @@ namespace App\Test;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Client;
 use App\Entity\Note;
+use App\Entity\Semester;
 use App\Entity\Subject;
 use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
@@ -69,7 +70,7 @@ class CustomApiTestCase extends ApiTestCase
         return $note;
     }
 
-    protected function createSubject($name): Subject
+    protected function createSubject(string $name): Subject
     {
         $subject = new Subject();
         $subject->setName($name);
@@ -78,6 +79,17 @@ class CustomApiTestCase extends ApiTestCase
         $em->flush();
 
         return $subject;
+    }
+
+    protected function createSemester(string $name): Semester
+    {
+        $semester = new Semester();
+        $semester->setName($name);
+        $em = $this->getEntityManager();
+        $em->persist($semester);
+        $em->flush();
+
+        return $semester;
     }
 
     protected function getPasswordHasher(): UserPasswordHasherInterface
