@@ -13,7 +13,32 @@ use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        'get' => [
+            'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
+            'security_message' => 'Only authenticated users can get collection of subjects.',
+        ],
+        'post' => [
+            'security' => "is_granted('ROLE_ADMIN')",
+            'security_message' => 'Only user with ROLE_ADMIN can create a subject',
+        ],
+    ],
+    itemOperations: [
+        'get' => [
+            'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
+            'security_message' => 'Only authenticated users can get a subject.',
+        ],
+        'patch' => [
+            'security' => "is_granted('ROLE_ADMIN')",
+            'security_message' => 'Only user with ROLE_ADMIN can update a subject',
+        ],
+        'delete' => [
+            'security' => "is_granted('ROLE_ADMIN')",
+            'security_message' => 'Only user with ROLE_ADMIN can update a subject',
+        ],
+    ],
+)]
 #[ORM\Entity]
 class NoteType
 {
@@ -24,13 +49,14 @@ class NoteType
     private UuidInterface $id;
 
     #[Groups(['note:read'])]
-    #[ORM\Column]
+    #[ORM\Column(length: 30)]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 30)]
     private string $name;
 
     #[Groups(['note:read'])]
     #[ORM\Column]
-    #[Assert\Range(min: 1, max: 3)]
+    #[Assert\Choice(options: [1, 2, 3])]
     private int $weight;
 
     #[ORM\OneToMany(mappedBy: 'noteType', targetEntity: Note::class)]

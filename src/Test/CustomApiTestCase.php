@@ -7,6 +7,7 @@ namespace App\Test;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Client;
 use App\Entity\Note;
+use App\Entity\NoteType;
 use App\Entity\SchoolClass;
 use App\Entity\Semester;
 use App\Entity\Subject;
@@ -102,6 +103,18 @@ class CustomApiTestCase extends ApiTestCase
         $em->flush();
 
         return $semester;
+    }
+
+    protected function createNoteType($name, $weight): NoteType
+    {
+        $noteType = new NoteType();
+        $noteType->setName($name);
+        $noteType->setWeight($weight);
+        $em = $this->getEntityManager();
+        $em->persist($noteType);
+        $em->flush();
+
+        return $noteType;
     }
 
     protected function getPasswordHasher(): UserPasswordHasherInterface
