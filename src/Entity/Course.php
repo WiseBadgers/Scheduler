@@ -14,11 +14,36 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ApiResource(
-        collectionOperations: ['get', 'post'],
-        itemOperations: ['get', 'patch', 'delete'],
+        collectionOperations: [
+            'get' => [
+                'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
+                'security_message' => 'Only authenticated users can get collection of subjects.',
+            ],
+            'post' => [
+                'validation_groups' => ['Default', 'create'],
+                'security' => "is_granted('ROLE_ADMIN')",
+                'security_message' => 'Only user with ROLE_ADMIN can create a subject',
+            ],
+        ],
+        itemOperations: [
+            'get' => [
+                'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
+                'security_message' => 'Only authenticated users can get a subject.',
+            ],
+            'patch' => [
+                'security' => "is_granted('ROLE_ADMIN')",
+                'security_message' => 'Only user with ROLE_ADMIN can update a subject',
+            ],
+            'delete' => [
+                'security' => "is_granted('ROLE_ADMIN')",
+                'security_message' => 'Only user with ROLE_ADMIN can update a subject',
+            ],
+        ],
+        denormalizationContext: ['groups' => ['course:write']],
         normalizationContext: ['groups' => ['course:read']]
     ),
     ApiFilter(
@@ -41,20 +66,24 @@ class Course
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[Groups(['course:read'])]
+    #[Groups(['course:read', 'course:write'])]
     #[ORM\ManyToOne(inversedBy: 'courses')]
+    #[Assert\NotBlank(groups: ['create'])]
     private User $teacher;
 
-    #[Groups(['course:read', 'note:read'])]
+    #[Groups(['course:read', 'course:write', 'note:read'])]
     #[ORM\ManyToOne(inversedBy: 'courses')]
+    #[Assert\NotBlank(groups: ['create'])]
     private Semester $semester;
 
-    #[Groups(['course:read', 'note:read'])]
+    #[Groups(['course:read', 'course:write', 'note:read'])]
     #[ORM\ManyToOne(inversedBy: 'courses')]
+    #[Assert\NotBlank(groups: ['create'])]
     private Subject $subject;
 
-    #[Groups(['course:read'])]
+    #[Groups(['course:read', 'course:write'])]
     #[ORM\ManyToOne(inversedBy: 'courses')]
+    #[Assert\NotBlank(groups: ['create'])]
     private SchoolClass $schoolClass;
 
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: Note::class)]

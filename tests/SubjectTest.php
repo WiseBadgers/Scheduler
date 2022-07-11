@@ -15,14 +15,14 @@ class SubjectTest extends CustomApiTestCase
     {
         $client = self::createClient();
 
-        // tests if unauthorized user gets Unauthorized
+        // tests if anonymous user gets Unauthorized
         $client->request('POST', '/api/subjects', [
             'json' => ['name' => 'history'],
         ]);
         $this->assertResponseStatusCodeSame(401);
 
         // tests if user without ROLE_ADMIN gets Access Denied
-        $this->createUserAndLogIn($client, 'not-admin@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'teacher@test.com', 'test', ['ROLE_TEACHER']);
         $client->request('POST', '/api/subjects', [
             'json' => ['name' => 'history'],
         ]);
@@ -52,14 +52,14 @@ class SubjectTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if logged-in user gets Success
-        $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_TEACHER']);
         $client->request('GET', '/api/subjects/'.$subject->getId());
         $this->assertResponseIsSuccessful();
     }
 
     public function testDeleteSubject(): void
     {
-        $client = $this->createClient();
+        $client = self::createClient();
         $subject = $this->createSubject('math');
 
         // tests if anonymous user gets Unauthorized
@@ -67,7 +67,7 @@ class SubjectTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if user without ROLE_ADMIN gets Access Denied
-        $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_TEACHER']);
         $client->request('DELETE', '/api/subjects/'.$subject->getId());
         $this->assertResponseStatusCodeSame(403);
 
@@ -79,7 +79,7 @@ class SubjectTest extends CustomApiTestCase
 
     public function testPatchSubject(): void
     {
-        $client = $this->createClient();
+        $client = self::createClient();
         $subject = $this->createSubject('physics');
 
         // tests if anonymous user gets Unauthorized
@@ -90,7 +90,7 @@ class SubjectTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if user without ROLE_ADMIN gets Access Denied
-        $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_TEACHER']);
         $client->request('PATCH', '/api/subjects/'.$subject->getId(), [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
             'json' => ['name' => 'history'],

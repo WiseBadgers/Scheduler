@@ -25,7 +25,7 @@ class NoteTypeTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if user without ROLE_ADMIN gets Access Denied
-        $this->createUserAndLogIn($client, 'not-admin@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'not-admin@test.com', 'test', ['ROLE_STUDENT']);
         $client->request('POST', '/api/note_types', [
             'json' => [
                 'name' => 'Exam',
@@ -73,7 +73,7 @@ class NoteTypeTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if logged-in user gets Success
-        $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_STUDENT']);
         $client->request('GET', '/api/note_types/'.$noteType->getId());
         $this->assertResponseIsSuccessful();
     }
@@ -88,7 +88,7 @@ class NoteTypeTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if user without ROLE_ADMIN gets Access Denied
-        $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_STUDENT']);
         $client->request('DELETE', '/api/note_types/'.$noteType->getId());
         $this->assertResponseStatusCodeSame(403);
 
@@ -114,7 +114,7 @@ class NoteTypeTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if user without ROLE_ADMIN gets Access Denied
-        $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_STUDENT']);
         $client->request('PATCH', '/api/note_types/'.$noteType->getId(), [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
             'json' => [

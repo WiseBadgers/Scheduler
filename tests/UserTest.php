@@ -15,12 +15,14 @@ class UserTest extends CustomApiTestCase
     public function testCreateUser(): void
     {
         $client = self::createClient();
+        $this->createUserAndLogIn($client, 'admin@test.com', 'test', ['ROLE_ADMIN']);
 
         $client->request('POST', '/api/users', [
             'json' => [
                 'firstName' => 'test',
                 'lastName' => 'test',
                 'email' => 'test@test.com',
+                'roles' => ['ROLE_STUDENT'],
                 'password' => 'test',
             ],
         ]);
@@ -30,7 +32,7 @@ class UserTest extends CustomApiTestCase
     public function testGetUser(): void
     {
         $client = self::createClient();
-        $user = $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $user = $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_STUDENT']);
 
         $user->setPhoneNumber('234234234');
         $em = $this->getEntityManager();
@@ -71,7 +73,5 @@ class UserTest extends CustomApiTestCase
         /** @var User $user */
         $user = $em->getRepository(User::class)->find($user->getId());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
-
-
     }
 }

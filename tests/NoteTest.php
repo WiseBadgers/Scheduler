@@ -19,6 +19,7 @@ class NoteTest extends CustomApiTestCase
         $this->student2 = $this->createUser('student2@test.com', 'test', ['ROLE_STUDENT']);
         $this->teacher1 = $this->createUser('teacher1@test.com', 'test', ['ROLE_TEACHER']);
         $this->teacher2 = $this->createUser('teacher2@test.com', 'test', ['ROLE_TEACHER']);
+        $this->noteType = $this->createNoteType('Exam', 3);
     }
 
     public function testCreateNote()
@@ -31,7 +32,7 @@ class NoteTest extends CustomApiTestCase
                 'student' => '/api/users/'.$this->student1->getId(),
                 'teacher' => '/api/users/'.$this->teacher1->getId(),
 //                'course' => '/api/courses/'.$this->course->getId(),
-//                'noteType' => 'api/note_types/'.$this->noteType->getId(),
+                'noteType' => 'api/note_types/'.$this->noteType->getId(),
             ],
         ]);
         $this->assertResponseStatusCodeSame(401);
@@ -45,7 +46,7 @@ class NoteTest extends CustomApiTestCase
                 'student' => '/api/users/'.$this->student1->getId(),
                 'teacher' => '/api/users/'.$this->teacher1->getId(),
 //                'course' => '/api/courses/'.$this->course->getId(),
-//                'noteType' => 'api/note_types/'.$this->noteType->getId(),
+                'noteType' => 'api/note_types/'.$this->noteType->getId(),
             ],
         ]);
         $this->assertResponseStatusCodeSame(403);
@@ -59,7 +60,7 @@ class NoteTest extends CustomApiTestCase
                 'student' => '/api/users/'.$this->student1->getId(),
                 'teacher' => '/api/users/'.$this->teacher1->getId(),
 //                'course' => '/api/courses/'.$this->course->getId(),
-//                'noteType' => 'api/note_types/'.$this->noteType->getId(),
+                'noteType' => 'api/note_types/'.$this->noteType->getId(),
             ],
         ]);
         $this->assertResponseStatusCodeSame(201);
@@ -73,7 +74,7 @@ class NoteTest extends CustomApiTestCase
                 'student' => '/api/users/'.$this->student1->getId(),
                 'teacher' => '/api/users/'.$this->teacher1->getId(),
 //                'course' => '/api/courses/'.$this->course->getId(),
-//                'noteType' => 'api/note_types/'.$this->noteType->getId(),
+                'noteType' => 'api/note_types/'.$this->noteType->getId(),
             ],
         ]);
         $this->assertResponseStatusCodeSame(400);
@@ -81,7 +82,7 @@ class NoteTest extends CustomApiTestCase
 
     public function testGetNote(): void
     {
-        $note = $this->createNote($this->student1, $this->teacher1);
+        $note = $this->createNote($this->student1, $this->teacher1, $this->noteType);
 
         // tests if an unauthorized user gets Unauthorized
         $this->client->request('GET', '/api/notes/'.$note->getId());
@@ -110,7 +111,7 @@ class NoteTest extends CustomApiTestCase
 
     public function testDeleteNote(): void
     {
-        $note = $this->createNote($this->student2, $this->teacher2);
+        $note = $this->createNote($this->student2, $this->teacher2, $this->noteType);
 
         // tests if unauthorized user gets Unauthorized
         $this->client->request('DELETE', '/api/notes/'.$note->getId());
@@ -134,7 +135,7 @@ class NoteTest extends CustomApiTestCase
 
     public function testPatchNote(): void
     {
-        $note = $this->createNote($this->student1, $this->teacher1);
+        $note = $this->createNote($this->student1, $this->teacher1, $this->noteType);
 
         // tests if an unauthorized user gets Unauthorized while trying to patch a note
         $this->client->request('PATCH', '/api/notes/'.$note->getId(), [

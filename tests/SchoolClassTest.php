@@ -22,7 +22,7 @@ class SchoolClassTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if user without ROLE_ADMIN gets Access Denied
-        $this->createUserAndLogIn($client, 'not-admin@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'not-admin@test.com', 'test', ['ROLE_TEACHER']);
         $client->request('POST', '/api/classes', [
             'json' => ['name' => '3A'],
         ]);
@@ -52,7 +52,7 @@ class SchoolClassTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if logged-in user gets Success
-        $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_TEACHER']);
         $client->request('GET', '/api/classes/'.$class->getId());
         $this->assertResponseIsSuccessful();
     }
@@ -67,7 +67,7 @@ class SchoolClassTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if user without ROLE_ADMIN gets Access Denied
-        $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_TEACHER']);
         $client->request('DELETE', '/api/classes/'.$class->getId());
         $this->assertResponseStatusCodeSame(403);
 
@@ -90,7 +90,7 @@ class SchoolClassTest extends CustomApiTestCase
         $this->assertResponseStatusCodeSame(401);
 
         // tests if user without ROLE_ADMIN gets Access Denied
-        $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_TEACHER']);
         $client->request('PATCH', '/api/classes/'.$class->getId(), [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
             'json' => ['name' => '2C'],

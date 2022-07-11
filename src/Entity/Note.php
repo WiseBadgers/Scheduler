@@ -94,9 +94,9 @@ class Note
     #[ORM\ManyToOne(inversedBy: 'notes')]
     private Course $course;
 
-    // TODO: Add it to serialization group note:write and add NotBlank validation
-    #[Groups(['note:read'])]
+    #[Groups(['note:read', 'note:write'])]
     #[ORM\ManyToOne(inversedBy: 'notes')]
+    #[Assert\NotBlank]
     private NoteType $noteType;
 
     #[Groups(['note:read', 'note:write'])]
