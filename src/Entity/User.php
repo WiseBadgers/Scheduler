@@ -32,7 +32,9 @@ use Symfony\Component\Validator\Constraints as Assert;
             ],
         ],
         itemOperations: [
-            'get' => ['security' => "is_granted('ROLE_TEACHER')"],
+            'get' => [
+//                'security' => "is_granted('ROLE_TEACHER')"
+            ],
             'delete' => ['security' => "is_granted('ROLE_ADMIN')"],
             'patch' => ['security' => "is_granted('ROLE_ADMIN')"],
         ],
@@ -81,7 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email]
     private string $email;
 
-    #[Groups(['teacher:read', 'user:write'])]
+    #[Groups(['teacher:read', 'owner:read', 'user:write'])]
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $phoneNumber = null;
 

@@ -23,10 +23,10 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Serializer\TeacherGroupsContextBuilder:
+    App\Serializer\ContextBuilder\TeacherGroupsContextBuilder:
         decorates: 'api_platform.serializer.context_builder'
-        arguments: [ '@App\Serializer\TeacherGroupsContextBuilder.inner' ]
+        arguments: [ '@App\Serializer\ContextBuilder\TeacherGroupsContextBuilder.inner' ]
 
-    App\Serializer\AdminGroupsContextBuilder:
+    App\Serializer\ContextBuilder\AdminGroupsContextBuilder:
         decorates: 'api_platform.serializer.context_builder'
-        arguments: [ '@App\Serializer\AdminGroupsContextBuilder.inner' ]
+        arguments: [ '@App\Serializer\ContextBuilder\AdminGroupsContextBuilder.inner' ]

@@ -9,8 +9,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
@@ -62,6 +60,10 @@ class Note
     private int $value;
 
     #[Groups(['note:read', 'note:write'])]
+    #[ORM\Column(type: 'text', nullable: true)]
+    private string $noteComment;
+
+    #[Groups(['note:read', 'note:write'])]
     #[ORM\ManyToOne(inversedBy: 'studentNotes')]
     #[Assert\NotBlank]
     private User $student;
@@ -85,19 +87,8 @@ class Note
     #[Assert\NotBlank]
     private NoteType $noteType;
 
-    #[Groups(['note:read', 'note:write'])]
-    #[ORM\OneToMany(
-        mappedBy: 'note',
-        targetEntity: NoteComment::class,
-        cascade: ['persist', 'remove'],
-        orphanRemoval: true)
-    ]
-    #[Assert\Valid]
-    private Collection $noteComments;
-
     public function __construct()
     {
-        $this->noteComments = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }
 
@@ -114,6 +105,16 @@ class Note
     public function setValue(int $value): void
     {
         $this->value = $value;
+    }
+
+    public function getNoteComment(): string
+    {
+        return $this->noteComment;
+    }
+
+    public function setNoteComment(string $noteComment): void
+    {
+        $this->noteComment = $noteComment;
     }
 
     public function getStudent(): User
@@ -159,29 +160,5 @@ class Note
     public function setNoteType(NoteType $noteType): void
     {
         $this->noteType = $noteType;
-    }
-
-    public function getNoteComments(): iterable
-    {
-        return $this->noteComments;
-    }
-
-    public function addNoteComment(NoteComment $noteComment): self
-    {
-        if (!$this->noteComments->contains($noteComment)) {
-            $this->noteComments[] = $noteComment;
-            $noteComment->setNote($this);
-        }
-
-        return $this;
-    }
-
-    public function removeNoteComment(NoteComment $noteComment): self
-    {
-        if ($this->noteComments->contains($noteComment)) {
-            $this->noteComments->removeElement($noteComment);
-        }
-
-        return $this;
     }
 }

@@ -32,34 +32,52 @@ class UserTest extends CustomApiTestCase
     public function testGetUser(): void
     {
         $client = self::createClient();
-        $user = $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_STUDENT']);
-
-        $user->setPhoneNumber('234234234');
+        $user1 = $this->createUserAndLogIn($client, 'test@test.com', 'test', ['ROLE_TEACHER']);
+        $user1->setPhoneNumber('234234234');
         $em = $this->getEntityManager();
         $em->flush();
 
-        $client->request('GET', '/api/users/'.$user->getId());
-        $this->assertJsonContains(['email' => 'test@test.com']);
+        $client->request('GET', '/api/users/'.$user1->getId());
         $data = $client->getResponse()->toArray();
-        $this->assertArrayNotHasKey('phoneNumber', $data);
+        $this->assertArrayHasKey('phoneNumber', $data);
 
-        // refreshes a user and elevates user to ROLE_ADMIN
-        $user = $em->getRepository(User::class)->find($user->getId());
-        $user->setRoles(['ROLE_TEACHER']);
+        // refreshes a user and gives user ROLE_STUDENT
+        $user1 = $em->getRepository(User::class)->find($user1->getId());
+        $user1->setRoles(['ROLE_STUDENT']);
         $em->flush();
         $this->logIn($client, 'test@test.com', 'test');
 
-        $client->request('GET', '/api/users/'.$user->getId());
+        $client->request('GET', '/api/users/'.$user1->getId());
         $data = $client->getResponse()->toArray();
         $this->assertArrayHasKey('phoneNumber', $data);
+
+        $user2 = $this->createUser('user2@test.com', 'test', ['ROLE_STUDENT']);
+        $user2->setPhoneNumber('123123123');
+        $em = $this->getEntityManager();
+        $em->flush();
+        $this->logIn($client, 'test@test.com', 'test');
+
+        $client->request('GET', '/api/users/'.$user2->getId());
+        $data = $client->getResponse()->toArray();
+        $this->assertArrayNotHasKey('phoneNumber', $data);
     }
 
     public function testPatchUser(): void
     {
         $client = self::createClient();
-        $user = $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
 
-        $client->request('PATCH', '/api/users/'.$user->getId(), [
+        $user1 = $this->createUserAndLogIn($client, 'test@test.com', 'test', []);
+        $client->request('PATCH', '/api/users/'.$user1->getId(), [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => [
+                'firstName' => 'Predator',
+                'roles' => ['ROLE_ADMIN'],
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        $this->createUserAndLogIn($client, 'admin@test.com', 'test', ['ROLE_ADMIN']);
+        $client->request('PATCH', '/api/users/'.$user1->getId(), [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
             'json' => [
                 'firstName' => 'Predator',
@@ -70,8 +88,8 @@ class UserTest extends CustomApiTestCase
         $this->assertJsonContains(['firstName' => 'Predator']);
 
         $em = $this->getEntityManager();
-        /** @var User $user */
-        $user = $em->getRepository(User::class)->find($user->getId());
-        $this->assertEquals(['ROLE_USER'], $user->getRoles());
+        /** @var User $user1 */
+        $user1 = $em->getRepository(User::class)->find($user1->getId());
+        // check if $user1 has ROLE_ADMIN
     }
 }
