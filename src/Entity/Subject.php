@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         'patch' => ['security' => "is_granted('ROLE_ADMIN')"],
     ],
 )]
-#[UniqueEntity('name')]
+#[UniqueEntity(fields: ['name'])]
 #[ORM\Entity]
 class Subject
 {
