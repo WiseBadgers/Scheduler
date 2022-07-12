@@ -1,0 +1,7 @@
+App\Entity\Semester:
+  semester_1:
+    name: "Summer 2022"
+  semester_2:
+    name: "Winter 2022"
+  semester_3:
+    name: "Summer 2023"

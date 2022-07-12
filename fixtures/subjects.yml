@@ -1,0 +1,21 @@
+App\Entity\Subject:
+  subject_1:
+    name: "History"
+  subject_2:
+    name: "Geography"
+  subject_3:
+    name: "Polish"
+  subject_4:
+    name: "English"
+  subject_5:
+    name: "Physics"
+  subject_6:
+    name: "Biology"
+  subject_7:
+    name: "Chemistry"
+  subject_8:
+    name: "Physical Education"
+  subject_9:
+    name: "German"
+  subject_10:
+    name: "Ukrainian"

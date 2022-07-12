@@ -1,0 +1,10 @@
+App\Entity\NoteType:
+  note_type_1:
+    name: "Exam"
+    weight: 3
+  note_type_2:
+    name: "Quiz"
+    weight: 2
+  note_type_3:
+    name: "Test"
+    weight: 1

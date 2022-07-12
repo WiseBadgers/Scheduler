@@ -1,0 +1,19 @@
+App\Entity\SchoolClass:
+  class_1A:
+    name: 1A
+  class_1B:
+    name: 1B
+  class_1C:
+    name: 1C
+  class_2A:
+    name: 2A
+  class_2B:
+    name: 2B
+  class_2C:
+    name: 2C
+  class_3A:
+    name: 3A
+  class_3B:
+    name: 3B
+  class_3C:
+    name: 3C
