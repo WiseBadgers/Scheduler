@@ -10,36 +10,23 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     collectionOperations: [
-        'get' => [
-            'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
-            'security_message' => 'Only authenticated users can get collection of subjects.',
-        ],
-        'post' => [
-            'security' => "is_granted('ROLE_ADMIN')",
-            'security_message' => 'Only user with ROLE_ADMIN can create a subject',
-        ],
+        'get' => ['security' => "is_granted('IS_AUTHENTICATED_FULLY')"],
+        'post' => ['security' => "is_granted('ROLE_ADMIN')"],
     ],
     itemOperations: [
-        'get' => [
-            'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
-            'security_message' => 'Only authenticated users can get a subject.',
-        ],
-        'patch' => [
-            'security' => "is_granted('ROLE_ADMIN')",
-            'security_message' => 'Only user with ROLE_ADMIN can update a subject',
-        ],
-        'delete' => [
-            'security' => "is_granted('ROLE_ADMIN')",
-            'security_message' => 'Only user with ROLE_ADMIN can update a subject',
-        ],
+        'get' => ['security' => "is_granted('IS_AUTHENTICATED_FULLY')"],
+        'patch' => ['security' => "is_granted('ROLE_ADMIN')"],
+        'delete' => ['security' => "is_granted('ROLE_ADMIN')"],
     ],
-    shortName: 'Class'
+    shortName: 'Class',
 )]
+#[UniqueEntity(fields: ['name'])]
 #[ORM\Entity]
 class SchoolClass
 {
@@ -50,7 +37,7 @@ class SchoolClass
     private UuidInterface $id;
 
     #[Groups(['user:read', 'course:read'])]
-    #[ORM\Column(length: 2)]
+    #[ORM\Column(length: 2, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 2)]
     private string $name;
