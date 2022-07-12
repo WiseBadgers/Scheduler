@@ -25,12 +25,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ApiResource(
         collectionOperations: [
-            'get',
+            'get' => ['security' => "is_granted('ROLE_TEACHER')"],
             'post' => [
-              'validation_groups' => ['Default', 'create'],
+                'validation_groups' => ['Default', 'create'],
+                'security' => "is_granted('ROLE_ADMIN')",
             ],
         ],
-        itemOperations: ['get', 'patch', 'delete'],
+        itemOperations: [
+            'get' => ['security' => "is_granted('ROLE_TEACHER')"],
+            'delete' => ['security' => "is_granted('ROLE_ADMIN')"],
+            'patch' => ['security' => "is_granted('ROLE_ADMIN')"],
+        ],
         attributes: [
             'pagination_items_per_page' => 10,
             'formats' => ['json', 'jsonld', 'html', 'csv' => ['text/csv']],
@@ -80,7 +85,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $phoneNumber = null;
 
-    #[Groups(['user:read', 'admin:write', 'course:read'])]
+    #[Groups(['user:read', 'user:write', 'course:read'])]
     #[ORM\Column(type: 'json')]
     #[Assert\NotBlank(groups: ['create'])]
     private array $roles = [];
