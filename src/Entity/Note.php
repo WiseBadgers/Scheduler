@@ -20,28 +20,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ApiResource(
         collectionOperations: [
-            'get' => [
-                'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
-                'security_message' => 'You need to be logged-in user to access this resource.',
-            ],
-            'post' => [
-                'security' => "is_granted('ROLE_TEACHER')",
-                'security_message' => 'Only user with ROLE_TEACHER can create a note.',
-            ],
+            'get' => ['security' => "is_granted('IS_AUTHENTICATED_FULLY')"],
+            'post' => ['security' => "is_granted('ROLE_TEACHER')"],
         ],
         itemOperations: [
-            'get' => [
-                'security' => "is_granted('GET_ITEM', object)",
-                'security_message' => 'Only user with ROLE_TEACHER who gave a note or ROLE_STUDENT who owns the note can get the note.',
-            ],
-            'delete' => [
-                'security' => "is_granted('DELETE_ITEM', object)",
-                'security_message' => 'Only user with ROLE TEACHER who gave a note can delete a note.',
-            ],
-            'patch' => [
-                'security' => "is_granted('PATCH_ITEM', object)",
-                'security_message' => 'Only user with ROLE_TEACHER who gave a note can update a note.',
-            ],
+            'get' => ['security' => "is_granted('GET_ITEM', object)"],
+            'delete' => ['security' => "is_granted('DELETE_ITEM', object)"],
+            'patch' => ['security' => "is_granted('PATCH_ITEM', object)"],
         ],
         denormalizationContext: ['groups' => ['note:write']],
         normalizationContext: ['groups' => ['note:read']]
@@ -49,6 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ApiFilter(
         SearchFilter::class,
         properties: [
+            'value' => SearchFilterInterface::STRATEGY_EXACT,
             'student.id' => SearchFilterInterface::STRATEGY_EXACT,
             'teacher.id' => SearchFilterInterface::STRATEGY_EXACT,
             'course.subject.id' => SearchFilterInterface::STRATEGY_EXACT,
@@ -89,9 +75,9 @@ class Note
     #[ORM\Column(type: 'datetime')]
     private \DateTime $createdAt;
 
-    // TODO: Add it to serialization group note:write and add NotBlank validation
-    #[Groups(['note:read'])]
+    #[Groups(['note:read', 'note:write'])]
     #[ORM\ManyToOne(inversedBy: 'notes')]
+    #[Assert\NotBlank]
     private Course $course;
 
     #[Groups(['note:read', 'note:write'])]

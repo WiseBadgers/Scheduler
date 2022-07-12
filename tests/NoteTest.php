@@ -20,6 +20,12 @@ class NoteTest extends CustomApiTestCase
         $this->teacher1 = $this->createUser('teacher1@test.com', 'test', ['ROLE_TEACHER']);
         $this->teacher2 = $this->createUser('teacher2@test.com', 'test', ['ROLE_TEACHER']);
         $this->noteType = $this->createNoteType('Exam', 3);
+        $this->course = $this->createCourse(
+            $this->teacher1,
+            $this->createSemester('Winter 2022'),
+            $this->createClass('1A'),
+            $this->createSubject('History'),
+        );
     }
 
     public function testCreateNote()
@@ -31,7 +37,7 @@ class NoteTest extends CustomApiTestCase
                 'value' => 2,
                 'student' => '/api/users/'.$this->student1->getId(),
                 'teacher' => '/api/users/'.$this->teacher1->getId(),
-//                'course' => '/api/courses/'.$this->course->getId(),
+                'course' => '/api/courses/'.$this->course->getId(),
                 'noteType' => 'api/note_types/'.$this->noteType->getId(),
             ],
         ]);
@@ -45,7 +51,7 @@ class NoteTest extends CustomApiTestCase
                 'value' => 2,
                 'student' => '/api/users/'.$this->student1->getId(),
                 'teacher' => '/api/users/'.$this->teacher1->getId(),
-//                'course' => '/api/courses/'.$this->course->getId(),
+                'course' => '/api/courses/'.$this->course->getId(),
                 'noteType' => 'api/note_types/'.$this->noteType->getId(),
             ],
         ]);
@@ -59,7 +65,7 @@ class NoteTest extends CustomApiTestCase
                 'value' => 2,
                 'student' => '/api/users/'.$this->student1->getId(),
                 'teacher' => '/api/users/'.$this->teacher1->getId(),
-//                'course' => '/api/courses/'.$this->course->getId(),
+                'course' => '/api/courses/'.$this->course->getId(),
                 'noteType' => 'api/note_types/'.$this->noteType->getId(),
             ],
         ]);
@@ -73,7 +79,7 @@ class NoteTest extends CustomApiTestCase
                 'value' => null,
                 'student' => '/api/users/'.$this->student1->getId(),
                 'teacher' => '/api/users/'.$this->teacher1->getId(),
-//                'course' => '/api/courses/'.$this->course->getId(),
+                'course' => '/api/courses/'.$this->course->getId(),
                 'noteType' => 'api/note_types/'.$this->noteType->getId(),
             ],
         ]);
@@ -82,7 +88,7 @@ class NoteTest extends CustomApiTestCase
 
     public function testGetNote(): void
     {
-        $note = $this->createNote($this->student1, $this->teacher1, $this->noteType);
+        $note = $this->createNote($this->student1, $this->teacher1, $this->noteType, $this->course);
 
         // tests if an unauthorized user gets Unauthorized
         $this->client->request('GET', '/api/notes/'.$note->getId());
@@ -111,7 +117,7 @@ class NoteTest extends CustomApiTestCase
 
     public function testDeleteNote(): void
     {
-        $note = $this->createNote($this->student2, $this->teacher2, $this->noteType);
+        $note = $this->createNote($this->student2, $this->teacher2, $this->noteType, $this->course);
 
         // tests if unauthorized user gets Unauthorized
         $this->client->request('DELETE', '/api/notes/'.$note->getId());
@@ -135,7 +141,7 @@ class NoteTest extends CustomApiTestCase
 
     public function testPatchNote(): void
     {
-        $note = $this->createNote($this->student1, $this->teacher1, $this->noteType);
+        $note = $this->createNote($this->student1, $this->teacher1, $this->noteType, $this->course);
 
         // tests if an unauthorized user gets Unauthorized while trying to patch a note
         $this->client->request('PATCH', '/api/notes/'.$note->getId(), [

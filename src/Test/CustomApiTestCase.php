@@ -71,13 +71,14 @@ class CustomApiTestCase extends ApiTestCase
     protected function createNote(
         User $student,
         User $teacher,
-        NoteType $noteType
+        NoteType $noteType,
+        Course $course
     ): Note {
         $note = new Note();
         $note->setValue(3);
         $note->setStudent($student);
         $note->setTeacher($teacher);
-//        $note->setCourse($this->course);
+        $note->setCourse($course);
         $note->setNoteType($noteType);
         $em = $this->getEntityManager();
         $em->persist($note);

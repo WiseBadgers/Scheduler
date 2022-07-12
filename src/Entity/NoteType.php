@@ -21,8 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     itemOperations: [
         'get' => ['security' => "is_granted('IS_AUTHENTICATED_FULLY')"],
-        'patch' => ['security' => "is_granted('ROLE_ADMIN')"],
         'delete' => ['security' => "is_granted('ROLE_ADMIN')"],
+        'patch' => ['security' => "is_granted('ROLE_ADMIN')"],
     ],
 )]
 #[UniqueEntity(fields: ['name'])]

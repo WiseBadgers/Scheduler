@@ -19,29 +19,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ApiResource(
         collectionOperations: [
-            'get' => [
-                'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
-                'security_message' => 'Only authenticated users can get collection of subjects.',
-            ],
+            'get' => ['security' => "is_granted('IS_AUTHENTICATED_FULLY')"],
             'post' => [
                 'validation_groups' => ['Default', 'create'],
                 'security' => "is_granted('ROLE_ADMIN')",
-                'security_message' => 'Only user with ROLE_ADMIN can create a subject',
             ],
         ],
         itemOperations: [
-            'get' => [
-                'security' => "is_granted('IS_AUTHENTICATED_FULLY')",
-                'security_message' => 'Only authenticated users can get a subject.',
-            ],
-            'patch' => [
-                'security' => "is_granted('ROLE_ADMIN')",
-                'security_message' => 'Only user with ROLE_ADMIN can update a subject',
-            ],
-            'delete' => [
-                'security' => "is_granted('ROLE_ADMIN')",
-                'security_message' => 'Only user with ROLE_ADMIN can update a subject',
-            ],
+            'get' => ['security' => "is_granted('IS_AUTHENTICATED_FULLY')"],
+            'patch' => ['security' => "is_granted('ROLE_ADMIN')"],
+            'delete' => ['security' => "is_granted('ROLE_ADMIN')"],
         ],
         denormalizationContext: ['groups' => ['course:write']],
         normalizationContext: ['groups' => ['course:read']]
@@ -59,7 +46,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 class Course
 {
-    #[Groups(['course:read'])]
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
